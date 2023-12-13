@@ -1,0 +1,46 @@
+### Create a user (admin property is stripped off due to whitelist:true in pipes)
+POST http://localhost:3000/auth/signup
+content-type: application/json
+
+{
+    "email": "gubba123@gmail.com",
+    "password": "gubba123"
+}
+
+### Sign in a user 
+POST http://localhost:3000/auth/signin
+content-type: application/json
+
+{
+    "email": "gubba123@gmail.com",
+    "password": "gubba123"
+}
+
+### Who Am I (Current user)
+GET http://localhost:3000/auth/whoamI
+
+### Sign out a user
+POST http://localhost:3000/auth/signout
+
+### Get a partiular user with id
+GET http://localhost:3000/auth/2
+
+### Get all users with given email
+GET http://localhost:3000/auth?email=gubbasainithin@gmail.com
+
+### Update user with given id
+PATCH http://localhost:3000/auth/2
+content-type: application/json
+
+{
+    "email": "asdf@gmail.com"
+}
+
+### Delete user with given id
+DELETE http://localhost:3000/auth/1
+
+### Set color
+GET http://localhost:3000/auth/colors/blue
+
+### Get color
+GET http://localhost:3000/auth/colors
