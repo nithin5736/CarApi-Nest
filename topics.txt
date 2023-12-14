@@ -1,0 +1,71 @@
+Nest app creation from scratch
+Nest app, module, controller creation using nest-cli
+Pipes, Gaurds, Dtos
+Module, Controller, Service, Repository
+Dependency Injection, Inversion of Control
+Importing and Exporting services between different modules
+------------------------------------------------------------
+TypeORM 
+Database connection, SQLite (File based database)
+Entity and Repository
+Migration -> Changing the structure of database like altering a column, add/remove coulumn, etc. (synchronize: true)
+Add validation using pipes --> first setup dto, then add global validation in main.ts file
+class-validator, class-transformer in dtos --> these packages used to validate incoming requests
+--------------------------------------------------------------
+
+injecting repository and service
+create and save user data
+create() vs save()
+hooks in typeorm --> hooks are used to define function on an entity which are automatically called at certain points
+find()
+findOne()
+update()
+remove()
+
+In repository,
+save(), remove() --> work with entity (hooks are executed here)
+insert(), update(), delete() --> work with properties of entity (hooks will not be executed here)
+
+NotFoundException()
+------------------------------------------------------------
+Interceptors(ClassSerializerInterceptor), Exclude(in class-transformer) --> Hide password
+Custom data serialization.
+Custom Interceptor (route handler level, controller level, global level) --> before hadler and before sending response (NestInterceptor, ExecutionContext, CallHandler)
+UserDto, Expose, plainToClass
+Custom decorator.
+Controller wide serialization
+Type safety around Serialization using interface
+--------------------------------------------------------------
+Authentication
+/signup 
+/signin
+AuthService depends on Userservice --> dependency Injection
+signup() in AuthService
+Hashing password --> Salt and Hash function
+signin() in Authservice
+Cookie-Session with an example of colors
+storing userId in a cookie
+Current SignedIn user
+Signout 
+Guard and Interceptor + Decorator
+Custome Decorator (createParamDecorator)
+Interceptor(Session object + User service instance) using NestInterceptor
+Connecting CurrentUser Interceptor to DI system
+Globally scoped current user interceptor
+Guards --> if user is not siged in then route handler rejects the request 
+UseGaurds(AuthGuard)
+------------------------------------------------------------
+Ubit testing vs Integration Testing
+
+Testing AuthService 
+Create testing container and a fakeUsersService
+
+Whenever UserService is needed, we provide with value of fakeUserService in return.
+
+Type safety of fake UsersService.
+
+beforeEach() and describe()
+
+signup() unit test --> Ensure password gets hashed
+
+Test for signup() --> email already in use 
