@@ -142,3 +142,22 @@ Adding beforeEach() and describe() to look more organize
 Test for signup() --> ensure password gets hashed
 
 Test for signup() --> email already in use (overriding find() of fakeUsersService in this test case)
+
+Test for signin() --> unused email
+
+Test for signin() --> invalid password
+
+Test for signin() --> correct password, first run signup() method for your password and use the resultant hashed password to test
+                  --> best method to test is to create an user array to store them and test accordingly 
+
+Refactor other tests for AuthService by removing the custom find() methods in fakeUsersService
+
+Controller unit testing --> Create fakeUsersService, fakeAuthService with methods being utiized in controller
+
+Add fakeUsersService, fakeAuthService into testing DI container
+write mock methods for findOne(), find() in fakeUsersService to test findUser(), findAllUsers() methods of controller
+
+Written unit tests for findAllUsers() , findUser() methods in controller
+
+Witten unit test for signin() --> check whether id set for session object
+

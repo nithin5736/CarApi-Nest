@@ -69,3 +69,14 @@ beforeEach() and describe()
 signup() unit test --> Ensure password gets hashed
 
 Test for signup() --> email already in use 
+
+Test for signin() --> unused email
+
+Test for signin() --> invalid password
+
+Test for signin() --> correct password
+
+Controller unit testing --> Create fakeUsersService, fakeAuthService
+
+Register fakeUsersService, fakeAuthService in testing DI container.
+write mock methods for findOne(), find() in fakeUsersService to test
