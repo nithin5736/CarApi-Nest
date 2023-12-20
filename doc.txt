@@ -204,3 +204,52 @@ from the test database for every test we run.
 In Nest, it is complicated to use environment varaibles. So, for that
 we create a configService in a DI container on which TypeOrmModule is dependent.
 ----------------------------------------------------------------------------
+
+Based on Nest approach we are going to create two .env files for development
+and testing seperately. Using ConfigService we read the values and use it.
+
+ConfigMoudle --> This module is mainly used to tell which environment is
+                 used currently
+ConfigService --> This service is used to read values from .env files based
+                  on current environment
+These both things are applied globally. ConfigService is used with the help
+of DI.
+ConfigModule.forRoot({
+  isGlobal: true,
+  envFilePath: `.env.${process.env.NODE_ENV}`,
+}),
+TypeOrmModule.forRootAsync({
+  inject: [ConfigService],
+  useFactory: (config: ConfigService) => {
+  return {
+      type: 'sqlite',
+      database: config.get<string>('DB_NAME'),
+      entities: [User, Report],
+      synchronize: true,
+    };
+  },
+}),
+
+Next task is to specify the environments whether it is development or testing.
+This can be done by specifying in package.json file using NODE_ENV for several
+scripts like start or test.
+We can easily specify using a package called cross-env in any type of system OS.
+
+Here, we got an error that database is locked. This error generated due to
+creating two app instances for app and auth spec files and accessing the
+test database simultaneously. So here multiple tests are running and access'
+database at same time. To get rid of this error we try to run one test at
+a single time.
+
+We are getting Internal Server Error because of same email is been used for
+registering. So we need to wipe out the database after every test. That can
+be done in two ways.
+1. Delete all rows from database table to delete the data.
+2. Delete the databases before each test. 
+So, we use a global beforeEach to delete the database that means removing
+the test.sqlite file from directory.
+"setupFilesAfterEnv" : ["<rootDir>/setup.ts"] --> this is executed before each test
+
+Next lets try to test signup then check who is currently signed user.
+Creating a follow up request after sign up to check currently signed in 
+user is valid or not.
