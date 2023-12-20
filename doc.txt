@@ -160,4 +160,47 @@ write mock methods for findOne(), find() in fakeUsersService to test findUser(),
 Written unit tests for findAllUsers() , findUser() methods in controller
 
 Witten unit test for signin() --> check whether id set for session object
+----------------------------------------------------------------------------
 
+End to End --> it is used to test entire application working as expected.
+               For example, Authentication flow(sign up->sign out->sign in).
+               For each test it creates new instance of application and runs
+               corresponding tests
+
+Written test for signup() --> send(user details) and expect using .then()
+
+While you are importing app module, here main.ts file is not executed before
+doesn't allow to use cookies and pipes. So, one easy way is to create 
+and intialize them in a seperate file and import them in both test and 
+main.ts files, then run the tests to get rid of errors.
+
+Another way is to set up middlewares(cookies, pipes) in app module itself
+instead of in main.ts file. As for every incoming request its gonna be executed.
+Setting up the validation Pipe globally in app module providers.
+{ provide: APP_PIPE, useValue: new ValidationPipe({ whitelist: true }) }
+
+Similarly, set up the cookie session middleware also which gonna execute
+for every incoming request.
+set them up using consumer middleware in app module class for all routes.
+configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(
+        cookieSession({
+          keys: ['abcdefghijklmnopqrstuvwxyz'],
+        }),
+      )
+      .forRoutes('*');
+  }
+
+best way to get rid of error of email already in use/ registering same user
+several time while testing several times is to use seperate databases for
+development and testing modes.
+So that we can wipe the database and create new instance of app for every
+time we run our tests.
+
+Using seperate databases for development and testing can be done with the
+help of environment variables. Next, thing is we need to wipe the data
+from the test database for every test we run. 
+In Nest, it is complicated to use environment varaibles. So, for that
+we create a configService in a DI container on which TypeOrmModule is dependent.
+----------------------------------------------------------------------------

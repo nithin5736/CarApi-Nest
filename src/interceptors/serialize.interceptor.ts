@@ -19,7 +19,7 @@ export class SerializeInterceptor implements NestInterceptor {
         // Run something before request is handled in handler
         // console.log("I'm running before handler", context);
 
-        // Intercept outgoing response befoe response sent
+        // Intercept outgoing response before response sent
         return next.handle().pipe(
             // Run something before response sent out
             map((data: any) => {

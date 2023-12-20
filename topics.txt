@@ -47,15 +47,15 @@ Cookie-Session with an example of colors
 storing userId in a cookie
 Current SignedIn user
 Signout 
-Guard and Interceptor + Decorator
-Custome Decorator (createParamDecorator)
+Guards and Interceptor + Decorator
+Custom Decorator (createParamDecorator)
 Interceptor(Session object + User service instance) using NestInterceptor
 Connecting CurrentUser Interceptor to DI system
 Globally scoped current user interceptor
 Guards --> if user is not siged in then route handler rejects the request 
 UseGaurds(AuthGuard)
 ------------------------------------------------------------
-Ubit testing vs Integration Testing
+Unit testing vs Integration Testing
 
 Testing AuthService 
 Create testing container and a fakeUsersService
@@ -80,3 +80,4 @@ Controller unit testing --> Create fakeUsersService, fakeAuthService
 
 Register fakeUsersService, fakeAuthService in testing DI container.
 write mock methods for findOne(), find() in fakeUsersService to test
+-------------------------------------------------------------------
