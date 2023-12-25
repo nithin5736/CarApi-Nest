@@ -19,7 +19,8 @@ services acts as proxy to these repositories and can use multiple repositories i
 Inversion of control (IoC) -->
 Classes should not create the instances of its own dependencies
 This can get rid of using dependency Injection (suitable for production and fast testing) -->
-create interfaces for repositories to pass any kind of object to the constructor, instead of creating an instance or specifically passing the exact repository object.
+create interfaces for repositories to pass any kind of object to the constructor, instead '
+of creating an instance or specifically passing the exact repository object.
 
 
 Dependency Injection →
@@ -253,3 +254,55 @@ the test.sqlite file from directory.
 Next lets try to test signup then check who is currently signed user.
 Creating a follow up request after sign up to check currently signed in 
 user is valid or not.
+-----------------------------------------------------------------
+
+User submits the details of a car by creating a report.
+User submits this report(millege,price,...) to a backend database. 
+Whenever other user asks for that car report we return submitted estimate.
+
+Adding other properties in Report entity like make, millege, latitude,...
+
+Lets try to make a route to create a post. Use Dtos to validate 
+incoming request.
+
+Applying validation rules for Report entity so that global validation pipe
+will validate incoming request. Injecting ReportsService in ReportsController.
+A valid authenticated user only can submit the report.
+
+InjectRepository() of report entity into reports service. 
+create() method in reports service.
+
+Make a request for create method to create a report after user sign in.
+
+Associations between user and report. We add a user_id column in reports
+table to know which user created that report. Associations between entities
+are complex.
+
+There are different types of associations between entities. In our case,
+it is one-to-many association w.r.t user to report. It depends on perspective.
+A user can have multiple reports.
+
+Add ManyToOne and OneToMany decorators on report and user entities. It will
+automatically adds a new column user_id on report entity.
+Delete the existing database also to avoid errors.
+
+First argument of association decorators tells to which entity we are 
+associated with. As it is circular dependency, so thats why we make use of
+function.
+Second argument take the associated entity instance as a parameter and returns
+current entity instance.(how it maps from user to reports in report entity)
+It is mainly used when there are two kinds of users like creator and approver
+of a report entity.
+
+Setting up the associations between entities after creating. Using CurrentUser
+decorator to associate user instance with report entity instance.
+But the response has password in it, so we need to hide that.
+
+Instead sending all properties of user as a response associated with report,
+we only send the id of that user record in report instance userId property.
+
+Formatting and Transform using dtos. transform and Expose peroperties of
+class-transformer.
+@Transform(({obj}) => obj.user.id)
+
+

@@ -1,0 +1,12 @@
+POST http://localhost:3000/reports
+content-type: application/json
+
+{
+    "make": "Mahindra",
+    "model": "XUV500",
+    "price": 400000,
+    "lat": 0,
+    "lng": 0,
+    "millege": 120,
+    "year": 2018
+}
