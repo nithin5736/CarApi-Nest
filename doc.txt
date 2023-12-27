@@ -262,7 +262,7 @@ Whenever other user asks for that car report we return submitted estimate.
 
 Adding other properties in Report entity like make, millege, latitude,...
 
-Lets try to make a route to create a post. Use Dtos to validate 
+Lets try to make a route to create a report. Use Dtos to validate 
 incoming request.
 
 Applying validation rules for Report entity so that global validation pipe
@@ -304,5 +304,68 @@ we only send the id of that user record in report instance userId property.
 Formatting and Transform using dtos. transform and Expose peroperties of
 class-transformer.
 @Transform(({obj}) => obj.user.id)
+----------------------------------------------------------------------
 
+Approving the submited report --> Authorized and Administrative users 
+will verify and aproove the submitted report by user. The report entity
+has a approved property with default value as False.
 
+Write logic in ReportsService to update the approved property of given id.
+And also expose that property in report dto.
+
+Adding authorization to the route --> We use AdminGuard to process the 
+incoming request whether it was made by an administrator or not.
+currentuser-interceptor --> this gonna intercept incoming request and attach
+                            current user
+AuthGuard --> this allow to make a request if user signin otherwise not
+Similarly, we use a AdminGuard for the report approve route --> so only
+admins can access or update it
+
+Add admin boolean property to user entity
+Create AdminGuard --> return true if current user is admin otherwise false
+ExecutionContext --> it is a wrapper around incoming request
+
+AdminGuard throws Forbidden error if you make a request, not working as 
+expected.
+
+Main issue is that current user interceptor is running after execution of
+middlewares, guards(Admin guard). We need to run that before admin guard.
+So, one way is to turn that interceptor into global middleware.
+
+Refactor currentuser interceptor to currentuser middleware and configure that
+to all user routes by including in users module.
+
+We need to fix an error of currentUser property to req object in currentuser
+middleware. To fix that we need to add the currentUser property in actual
+Request interface of express package.
+
+Get an estimate value for the query --> this gonna return an estimate value
+for given query properties of a vehicle and this query string is validated 
+using a dto. All the query string values are of type string. Some of them
+need to be number type so we will get a type error.
+
+We can get rid of that type error using decorator Transform(). This gonna
+receive the value from the incoming request, process it and converts that
+into appropriate type in dto before it gets validated in the dto.
+@Transform(({ value }) => parseFloat(value))
+
+To estimate the value for the given query details of vehicle, we need to
+run a complex query with different filters for each property. So for this
+we use queryBuilder which chains multiple method calls with different filters
+for our query.
+
+Writing query using query builder.
+this.repo
+      .createQueryBuilder()
+      .select('AVG(price)', 'price')
+      .where('make = :make', { make })
+      .andWhere('model = :model', { model })
+      .andWhere('lng - :lng BETWEEN -5 AND 5', { lng })
+      .andWhere('lat - :lat BETWEEN -5 AND 5', { lat })
+      .andWhere('year - :year BETWEEN -3 AND 3', { year })
+      .orderBy('ABS(millege - :millege)', 'DESC')
+      .setParameters({ millege })
+      .limit(3)
+      .getRawOne();
+
+Testing the query we wrote. Add another where with approved is TRUE.
