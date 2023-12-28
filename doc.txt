@@ -368,4 +368,47 @@ this.repo
       .limit(3)
       .getRawOne();
 
-Testing the query we wrote. Add another where with approved is TRUE.
+Testing the query we wrote. Add another where with approved is TRUE in query.
+---------------------------------------------------------------
+
+We are using SQLite database in dev/test environments. Now we need to swap
+database to Postgres in production environment and also need to hide the 
+cookie key and update the config properties for postgres in production env.
+
+First lets try to use .env to hide cookie key in both test/dev environments.
+
+Now we need to use Postgres database in prod env. (synchronize: true) it 
+is a main flag typeorm uses to convert/create structure of database tables
+using defined entities.
+
+Synchronize flag is very dangerous in production. For example, there is a 
+user enitity(name, email, password). Suppose by mistake you removed the 
+password from entity then typeorm will autmatically deletes the password 
+column from users database table. So here we lost the password data of users.
+Thats why it is recommended to use migrations instead of synchronize flag
+in production env.
+
+If we use synchronize flag in production env it can lead to data loss. So
+thats why we write and use migrations.
+Migration file has up(), down() methods.
+up -> it basically updates the structure of database
+down -> it basically undo the steps done in up()
+We can write and run multiple migration files in a row in a prod env.
+
+We use TypeORM CLI to execute the migration files and connect to database.
+But the main issue is that TypeORM CLI only executes entity and migration
+files. It does not have any idea of nest files and modules, config management,
+then it would be difficult connect to database mentioned in nest files.So,
+thats why we need to find a way that it can read config DB properties to
+connect to database.
+
+We need to use a ormconfig.js file to load up the configuration settings
+in development, testing, production environments, using TypeORM CLI. Here,
+we need to declare different properties for config object based on 
+different environments.
+
+We need to use ormconfig.js file to declare differnt configuration settings
+for different environments(use switch case) and export that dbConfig object.
+
+
+
