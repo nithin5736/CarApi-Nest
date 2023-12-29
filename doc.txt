@@ -410,5 +410,23 @@ different environments.
 We need to use ormconfig.js file to declare differnt configuration settings
 for different environments(use switch case) and export that dbConfig object.
 
+Inorder to create and apply migrations we need to use typeorm cli. Installing
+typeorm CLI is something difficult and nasty process to do. Refer typeorm
+using CLI documentation.
+
+We got an error that users table not found in database(when we make a request)
+as we used ormconfig.js file to declare configuration settings. Now we 
+need to generate and run migration files to run requests properly. Create
+config folder(for TypeOrmModule options) and data-souce file(TypeOrm CLI)
+to generate and run migrations properly.
+
+Our application works well in development. But in testing, we got some errors.
+We need to delete/erase the test database(for each individual test) 
+to execute tests properly. Similarly, we need to remigrate and clear test
+database for each individual test.
+
+
+
+
 
 
