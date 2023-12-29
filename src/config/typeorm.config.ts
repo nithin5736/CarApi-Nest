@@ -15,6 +15,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
           database: this.config.get('DB_NAME'),
           synchronize: this.config.get('SYNCHRONIZE'),
           autoLoadEntities: true,
+          entities: ['**/*.entity.js'],
         });
         break;
       case 'test':
@@ -24,6 +25,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
           synchronize: this.config.get('SYNCHRONIZE'),
           autoLoadEntities: true,
           migrationsRun: this.config.get('MIGRATIONS_RUN'),
+          entities: ['**/*.entity.ts'],
         });
         break;
       case 'production':
@@ -36,6 +38,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
           ssl: {
             rejectUnauthorized: this.config.get('SSL'),
           },
+          entities: ['**/*.entity.js'],
         });
         break;
       default:

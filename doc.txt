@@ -425,6 +425,8 @@ We need to delete/erase the test database(for each individual test)
 to execute tests properly. Similarly, we need to remigrate and clear test
 database for each individual test.
 
+Deploying our application --> port, production config(add production environment variables),
+
 
 
 
