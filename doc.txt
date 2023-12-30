@@ -13,72 +13,108 @@ dto is data transfer object which transfers data to object form.
 services and repositories -->
 have same methods in some cases but the main difference is that
 repository is used to directly interact with database whereas 
-services acts as proxy to these repositories and can use multiple repositories in a single service.
+services acts as proxy to these repositories and can use multiple 
+repositories in a single service.
 
 
 Inversion of control (IoC) -->
 Classes should not create the instances of its own dependencies
-This can get rid of using dependency Injection (suitable for production and fast testing) -->
-create interfaces for repositories to pass any kind of object to the constructor, instead '
-of creating an instance or specifically passing the exact repository object.
+This can get rid of using dependency Injection (suitable for production 
+and fast testing) -->
+create interfaces for repositories to pass any kind of object to the 
+constructor, instead of creating an instance or specifically passing 
+the exact repository object.
 
 
 Dependency Injection →
 DI container has: (use Injectable decorator on each dependency)
 Registration of classes and dependencies using Injectable() decorator
-DI container will take care of creating instances for us (creates only one copy of instance and shares among multiple services)
+DI container will take care of creating instances for us (creates only 
+one copy of instance and shares among multiple services)
 Main use of DI and IoC was testing the app is easy
 
 Importing and Exporting services between multiple modules.
 -------------------------------------------------------------
 
-TypeORM is object relational mapper for different databases like MySQL, Postgresql, MongoDB, SQLite.
-If root module is connected to a database then that database connection shared among child modules. (Appmodule -> database connection, users and reports modules also connected to database)
+TypeORM is object relational mapper for different databases like MySQL, 
+Postgresql, MongoDB, SQLite.
+If root module is connected to a database then that database connection 
+shared among child modules. (Appmodule -> database connection, users and 
+reports modules also connected to database)
 Database connection
 SQLite(File based database) stores information in a single file
 
-(Synchronize: true) flag --> Typeorm will automatically does migration for us. It is better to use synchronize flag in development environment rather than production environment.
-			     In production environment, we need to write migration files to change the structure of database.
+(Synchronize: true) flag --> Typeorm will automatically does migration 
+for us. It is better to use synchronize flag in development environment 
+rather than production environment. 
+In production environment, we need to write migration files to change 
+the structure of database.
 
-class-validator, class-transformer --> these packages used to validate incoming requests
-whitelist: true in globalValidation pipe --> used to strip off other properties sent by user except dto properties for security purpose 
+class-validator, class-transformer --> these packages used to validate 
+incoming requests
+whitelist: true in globalValidation pipe --> used to strip off other 
+properties sent by user except dto properties for security purpose 
 --------------------------------------------------------------
 
 InjectRepository() --> for injecting user repository
 create and save user data
 
-Instead of direcly saving data in databases (using save() method) first we create instance of the user(create() method) and then save it to run the validation step.
-hooks in typeorm --> hooks are used to define functions on an entity which are automatically called at certain points
+Instead of direcly saving data in databases (using save() method) first 
+we create instance of the user(create() method) and then save it to run 
+the validation step.
+hooks in typeorm --> hooks are used to define functions on an entity 
+which are automatically called at certain points
 
-Hooks are executed if we save user data after creating an instance not on directly saving user data. Hooks include like AfterInsert, AfterUpdate, AfterRemove, etc.
+Hooks are executed if we save user data after creating an instance not 
+on directly saving user data. Hooks include like AfterInsert, AfterUpdate,
+AfterRemove, etc.
 UsersService methods --> findOne(), find(), update(), remove()
-update(id, Partial<User>) --> first use findOne() to get user then update (using Object.assign()) and save the user in database
+update(id, Partial<User>) --> first use findOne() to get user then 
+update (using Object.assign()) and save the user in database
 
 In repository,
-save(), remove() --> work with entity (hooks are executed here) --> these methods will take two round trips on database
-insert(), update(), delete() --> work with properties of entity (hooks will not be executed here). All these methods take single round trip on database
+save(), remove() --> work with entity (hooks are executed here) --> these
+methods will take two round trips on database
+insert(), update(), delete() --> work with properties of entity 
+(hooks will not be executed here). All these methods take single round 
+trip on database
 
-controller methods --> findUser(), findAllUsers(), removeUser(), updateUser()
-Exception like NotFoundException() instead of throwing errors (throw new NotFoundException('User not found'))
+controller methods --> findUser(), findAllUsers(), removeUser(), 
+updateUser()
+Exception like NotFoundException() instead of throwing errors (throw new 
+NotFoundException('User not found'))
 --------------------------------------------------------------- 
 
-Interceptors(ClassSerializerInterceptor), Exclude(in class-transformer) --> to hide password from User entity instance instead of sending a plain object. But it has some downsides.
-If we follow this nestJs approach then there some downsides where we can't sent a single object different properties for different routes.
-So we need to use dtos for outgoing response objects also(which is used for custom serialization).
+Interceptors(ClassSerializerInterceptor), Exclude(in class-transformer) 
+--> to hide password from User entity instance instead of sending a 
+plain object. But it has some downsides.
+If we follow this nestJs approach then there some downsides where we 
+can't sent a single object different properties for different routes.
+So we need to use dtos for outgoing response objects also(which is used 
+for custom serialization).
 
-Custom interceptors can be used for incoming requests and outgoing responses.It can be applied to route handler level, controller level, global level.
-Use UserDto to convert outgoing entity instance to custom plain object(plainToClass, Expose in Dto).
-Here UserDto is hard coded in interceptors. So we use a constructor for this to customize.
+Custom interceptors can be used for incoming requests and outgoing 
+responses.It can be applied to route handler level, controller level, 
+global level.
+Use UserDto to convert outgoing entity instance to custom plain object
+(plainToClass, Expose in Dto).
+Here UserDto is hard coded in interceptors. So we use a constructor for 
+this to customize.
 
 Create and wrap the SerializeInterceptor in a Custom decorator.
-Apply the serialize decorator to whole controller for controller wide serialization
+Apply the serialize decorator to whole controller for controller wide 
+serialization
 
-Type Safety around serialization --> If we pass any kind of value like string, number in Serialize Decorator it won't show you any error. So create an interface of any Class type and 
-				     instead of type any replace it with interface type. Serialize decorator must accept a class.
+Type Safety around serialization --> If we pass any kind of value like 
+string, number in Serialize Decorator it won't show you any error. So 
+create an interface of any Class type and instead of type any replace it 
+with interface type. Serialize decorator must accept a class.
 interface ClassConstructor {
   new (...args: any[]) : {}
 }
-This interface represents a class. Here, that class is UserDto which basically has constructor and accepts an array of arguments and returns an empty object.
+This interface represents a class. Here, that class is UserDto which 
+basically has constructor and accepts an array of arguments and returns
+an empty object.
 ---------------------------------------------------------------------------
 Authentication
 /signup 
@@ -95,29 +131,38 @@ signup() in Authservice
 Hashing password --> salt and hash function
 Creating and Saving the user inside database
 
-signin() in Authservice --> retrieve the password with given email and hash the signin password and compare the both passwords.
+signin() in Authservice --> retrieve the password with given email and 
+hash the signin password and compare the both passwords.
 
 Cookie-Session is used to handle sessions (Example with colors)
-Adding cookie-session for signin and signup --> storing userId in a cookie
+Adding cookie-session for signin and signup --> storing userId in a 
+cookie
 
 Getting current signedin user using userId stored in cookie
 Sign out --> setting session userId with null
 
-Guard --> if a user is not signed in then we reject the request to the route handler
-Interceptor + Decorator --> automatically tells a route handler who is the current user
+Guard --> if a user is not signed in then we reject the request to the 
+route handler
+Interceptor + Decorator --> automatically tells a route handler who is 
+the current user
 
 Custom Decorator(createParamDecorator) --> to know about current user 
 ExecutionContext --> incoming request
 
-To get current user using decorator we need --> session object and user service instance
+To get current user using decorator we need --> session object and user 
+service instance
 But decorator can't get access to user service instance due to DI system. Decorators are not part of DT system.
-So, we use interceptor to get user service instance and decorator, give it to current user decorator to get access to current user.
+So, we use interceptor to get user service instance and decorator, give 
+it to current user decorator to get access to current user.
 
-CurrentUser Interceptor using Nest Interceptor --> make use of request object to pass userId to currentUser decorator
+CurrentUser Interceptor using Nest Interceptor --> make use of request 
+object to pass userId to currentUser decorator
 
 Connecting CurrentUser Interceptor to DI system
-First we need to run Currentuser interceptor then currentuser decorator to return current user
-It has a downside when there are multiple controllers then we need to import this Currentuser interceptor multiple places
+First we need to run Currentuser interceptor then currentuser decorator 
+to return current user
+It has a downside when there are multiple controllers then we need to 
+import this Currentuser interceptor multiple places
 
 Globally scoped CurrentUser Interceptor
 
@@ -128,35 +173,49 @@ UseGaurds(AuthGuard) -->
 ---------------------------------------------------------------------------------------
 Unit testing --> test individual methods of a class are working correctly or not.
 Integration testing --> test full flow of a feature in a app.
-Testing AuthService --> To test the methods in AuthService, we need to create instance of UsersService as AuthService depends on it. Similarly, UsersRepository and SQLite configuration.
+Testing AuthService --> To test the methods in AuthService, we need to 
+create instance of UsersService as AuthService depends on it. Similarly,
+UsersRepository and SQLite configuration.
 So, we gonna create a Fake UsersService to test AuthService.
 
-Test on creating an instance of AuthService --> First create testing container with all dependencies then create a fakeUserservice. Test finally.
+Test on creating an instance of AuthService --> First create testing 
+container with all dependencies then create a fakeUserservice. Test 
+finally.
 
-We created a fake UserService which has two methods find(), create(). Whenever UserService is needed, we provide with value of fakeUserService in return.
+We created a fake UserService which has two methods find(), create(). 
+Whenever UserService is needed, we provide with value of fakeUserService 
+in return.
 Created a basic version of Userservice in a fakeUsersService.
 
-Making the fake UsersService type annotation correct as same as UsersService.
+Making the fake UsersService type annotation correct as same as 
+UsersService.
 
 Adding beforeEach() and describe() to look more organize
 
 Test for signup() --> ensure password gets hashed
 
-Test for signup() --> email already in use (overriding find() of fakeUsersService in this test case)
+Test for signup() --> email already in use (overriding find() of 
+fakeUsersService in this test case)
 
 Test for signin() --> unused email
 
 Test for signin() --> invalid password
 
-Test for signin() --> correct password, first run signup() method for your password and use the resultant hashed password to test
-                  --> best method to test is to create an user array to store them and test accordingly 
+Test for signin() --> correct password, first run signup() method for 
+                    your password and use the resultant hashed password 
+                    to test
+                  --> best method to test is to create an user array 
+                  to store them and test accordingly 
 
-Refactor other tests for AuthService by removing the custom find() methods in fakeUsersService
+Refactor other tests for AuthService by removing the custom find() 
+methods in fakeUsersService
 
-Controller unit testing --> Create fakeUsersService, fakeAuthService with methods being utiized in controller
+Controller unit testing --> Create fakeUsersService, fakeAuthService
+ with methods being utiized in controller
 
 Add fakeUsersService, fakeAuthService into testing DI container
-write mock methods for findOne(), find() in fakeUsersService to test findUser(), findAllUsers() methods of controller
+write mock methods for findOne(), find() in fakeUsersService to test 
+findUser(), findAllUsers() methods of controller
 
 Written unit tests for findAllUsers() , findUser() methods in controller
 
@@ -267,7 +326,7 @@ incoming request.
 
 Applying validation rules for Report entity so that global validation pipe
 will validate incoming request. Injecting ReportsService in ReportsController.
-A valid authenticated user only can submit the report.
+A valid authenticated user only can submit the report(Signed in user).
 
 InjectRepository() of report entity into reports service. 
 create() method in reports service.
@@ -423,9 +482,11 @@ to generate and run migrations properly.
 Our application works well in development. But in testing, we got some errors.
 We need to delete/erase the test database(for each individual test) 
 to execute tests properly. Similarly, we need to remigrate and clear test
-database for each individual test.
+database for each individual test(migrationsRun: true property).
 
-Deploying our application --> port, production config(add production environment variables),
+Deploying our application --> port, tsconfig.build.json
+production config(add production environment variables), 
+                              
 
 
 
